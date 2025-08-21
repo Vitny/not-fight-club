@@ -1,3 +1,4 @@
+//screens
 const welcomeInput = document.querySelector('.playername');
 const createNameButton = document.querySelector('.create-name');
 const welcomePage = document.querySelector('.welcome-page');
@@ -17,8 +18,13 @@ const changeInput = document.querySelector('.playername-change');
 
 const playerAvatarDisplay = document.querySelector('.player-avatar');
 const playerNameDisplay = document.querySelector('.character-name');
+const playerAvatarDisplayFight = document.querySelector('.player-avatar-fight');
+const playerNameDisplayFight = document.querySelector('.character-name-fight');
 
 const mainScreen = document.querySelector('.main-screen');
+
+const fightButton = document.querySelector('.fight-button');
+const fightScreen = document.querySelector('.fight-screen');
 
 let playerName = '';
 let playerAvatar = '';
@@ -29,11 +35,13 @@ createNameButton.addEventListener('click', () => {
     playerName = 'Unknown Hero';
   }
 
+  changeInput.value = playerName;
   welcomePage.classList.remove('active');
   appearancePage.classList.add('active');
 
   welcomePlayer.textContent = `Glory to the ${playerName}!`;
   playerNameDisplay.textContent = playerName;
+  playerNameDisplayFight = playerName;
 });
 
 avatarOptions.forEach(option => {
@@ -43,6 +51,7 @@ avatarOptions.forEach(option => {
 
     playerAvatar = option.src;
     playerAvatarDisplay.src = playerAvatar;
+    playerAvatarDisplayFight.src = playerAvatar;
   });
 });
 
@@ -70,4 +79,72 @@ confirmChangeNameButton.addEventListener('click', () => {
 
   mainScreen.classList.add('active');
   namePage.classList.remove('active');
+});
+
+fightButton.addEventListener('click', () => {
+  mainScreen.classList.remove('active');
+  fightScreen.classList.add('active');
+});
+
+
+//checkboxes
+const optionsDefence = document.querySelectorAll('.option-defence');
+let selectedDefence = [];
+
+optionsDefence.forEach(label => {
+  const input = label.querySelector('input');
+
+  label.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    if (label.classList.contains('selected')) {
+      label.classList.remove('selected');
+      input.checked = false;
+      selectedDefence = selectedDefence.filter(val => val !== input.value);
+    }
+    else {
+      if (selectedDefence.length < 2) {
+        label.classList.add('selected');
+        input.checked = true;
+        selectedDefence.push(input.value);
+      } else {
+        const first = selectedDefence.shift();
+        document.querySelector(`input[value="${first}"]`).parentElement.classList.remove('selected');
+        document.querySelector(`input[value="${first}"]`).checked = false;
+
+        label.classList.add('selected');
+        input.checked = true;
+        selectedDefence.push(input.value);
+      }
+    }
+  });
+});
+
+const optionsAttack = document.querySelectorAll('.option-attack');
+let selectedAttack = null;
+
+optionsAttack.forEach(label => {
+  const input = label.querySelector('input');
+
+  label.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    if (label.classList.contains('selected')) {
+      label.classList.remove('selected');
+      input.checked = false;
+      selectedAttack = null;
+    }
+    else {
+      optionsAttack.forEach(l => {
+        l.classList.remove('selected');
+        l.querySelector('input').checked = false;
+      });
+
+      label.classList.add('selected');
+      input.checked = true;
+      selectedAttack = input.value;
+    }
+
+    console.log("Выбран:", selectedAttack);
+  });
 });
