@@ -11,6 +11,7 @@
 </head>
 
 <body>
+  <!--Welcome screen-->
   <div class="welcome-page start-screen active">
     <h1>Welcome to the "Not a Fight Club"</h1>
     <p class="welcome-p">First things first! Create your character!</p>
@@ -18,10 +19,51 @@
     <input class="playername" type="text" name="playername">
     <button class="create-name">Next Step</button>
   </div>
+
+  <!--Appearence screen-->
   <div class="appearance-page start-screen">
-    <h1 class="welcome-player">Welcome ma friend</h1>
-    <p class="character-p">Lets choose your appearance!</p>
-    <div></div>
+    <h1 class="welcome-player">Glory to the hero</h1>
+    <p class="character-p text-look">Lets choose your appearance!</p>
+    <div class="avatar-list">
+      <img class="avatar" src="assets/pic/avatars/warrior1.jpg" alt="pixel art picture of warrior">
+      <img class="avatar" src="assets/pic/avatars/warrior2.jpg" alt="pixel art picture of warrior">
+      <img class="avatar" src="assets/pic/avatars/warrior3.png" alt="pixel art picture of warrior">
+      <img class="avatar" src="assets/pic/avatars/warrior4.jpg" alt="pixel art picture of warrior">
+      <img class="avatar" src="assets/pic/avatars/warrior5.jpg" alt="pixel art picture of warrior">
+      <img class="avatar" src="assets/pic/avatars/warrior6.jpg" alt="pixel art picture of warrior">
+    </div>
+    <button class="confirm-appearance">Confirm your look</button>
+  </div>
+
+  <!--Main/Character screen-->
+  <div class="main-screen screen">
+    <div class="character info">
+      <p class="character-name">Hero name</p>
+      <img class="player-avatar" src="" alt="player avatar">
+      <div class="statistics">
+        <div class="wins-div">
+          <p>Wins</p>
+          <p class="wins-counter">0</p>
+        </div>
+        <div class="loses-div">
+          <p>Loses</p>
+          <p class="loses-counter">0</p>
+        </div>
+      </div>
+    </div>
+    <div class="buttons-list">
+      <button class="fight-button">Fight</button>
+      <button class="character-name-button">Change name</button>
+      <button class="character-appearance-button">Change appearance</button>
+    </div>
+  </div>
+
+  <!--Change name-->
+  <div class="name-page screen">
+    <h1 class="change-name-title">Change the name of your character</h1>
+    <p class="character-p">What is the name of your brave hero?</p>
+    <input class="playername-change" type="text" name="playername-change">
+    <button class="change-name-button">Confirm new name</button>
   </div>
 
   <script src="script.js" defer></script>
