@@ -1,3 +1,4 @@
+//screens
 const welcomeInput = document.querySelector('.playername');
 const createNameButton = document.querySelector('.create-name');
 const welcomePage = document.querySelector('.welcome-page');
@@ -17,23 +18,42 @@ const changeInput = document.querySelector('.playername-change');
 
 const playerAvatarDisplay = document.querySelector('.player-avatar');
 const playerNameDisplay = document.querySelector('.character-name');
+const playerAvatarDisplayFight = document.querySelector('.player-avatar-fight');
+const playerNameDisplayFight = document.querySelector('.character-name-fight');
 
 const mainScreen = document.querySelector('.main-screen');
 
+const fightButton = document.querySelector('.fight-button');
+const fightScreen = document.querySelector('.fight-screen');
+
 let playerName = '';
 let playerAvatar = '';
+
+let player = {
+  name: "",
+  health: 120,
+  damage: 10,
+  critChance: 0.25,
+  critMultiplier: 2,
+  attackZones: [],
+  defenseZones: [],
+};
 
 createNameButton.addEventListener('click', () => {
   playerName = welcomeInput.value;
   if (playerName === '') {
     playerName = 'Unknown Hero';
+    player.name = playerName;
   }
 
+  changeInput.value = playerName;
   welcomePage.classList.remove('active');
   appearancePage.classList.add('active');
 
   welcomePlayer.textContent = `Glory to the ${playerName}!`;
   playerNameDisplay.textContent = playerName;
+  playerNameDisplayFight.textContent = playerName;
+  player.name = playerName;
 });
 
 avatarOptions.forEach(option => {
@@ -43,10 +63,16 @@ avatarOptions.forEach(option => {
 
     playerAvatar = option.src;
     playerAvatarDisplay.src = playerAvatar;
+    playerAvatarDisplayFight.src = playerAvatar;
+    
+    confirmAppearanceButton.classList.remove('inactive');
   });
 });
 
 confirmAppearanceButton.addEventListener('click', () => {
+  if (confirmAppearanceButton.classList.contains('inactive')) 
+    return;
+
   mainScreen.classList.add('active');
   appearancePage.classList.remove('active');
 
@@ -67,7 +93,298 @@ changeNameButton.addEventListener('click', () => {
 confirmChangeNameButton.addEventListener('click', () => {
   playerName = changeInput.value;
   playerNameDisplay.textContent = playerName;
+  playerNameDisplayFight.textContent = playerName;
+  player.name = playerName;
 
   mainScreen.classList.add('active');
   namePage.classList.remove('active');
+});
+
+fightButton.addEventListener('click', () => {
+  mainScreen.classList.remove('active');
+  fightScreen.classList.add('active');
+});
+
+
+//checkboxes
+const optionsDefence = document.querySelectorAll('.option-defence');
+let selectedDefence = [];
+
+optionsDefence.forEach(label => {
+  const input = label.querySelector('input');
+
+  label.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    if (label.classList.contains('selected')) {
+      label.classList.remove('selected');
+      input.checked = false;
+      selectedDefence = selectedDefence.filter(val => val !== input.value);
+    }
+    else {
+      if (selectedDefence.length < 2) {
+        label.classList.add('selected');
+        input.checked = true;
+        selectedDefence.push(input.value);
+      } else {
+        const first = selectedDefence.shift();
+        document.querySelector(`input[value="${first}"]`).parentElement.classList.remove('selected');
+        document.querySelector(`input[value="${first}"]`).checked = false;
+
+        label.classList.add('selected');
+        input.checked = true;
+        selectedDefence.push(input.value);
+      }
+    }
+  });
+});
+
+const optionsAttack = document.querySelectorAll('.option-attack');
+let selectedAttack = null;
+
+optionsAttack.forEach(label => {
+  const input = label.querySelector('input');
+
+  label.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    if (label.classList.contains('selected')) {
+      label.classList.remove('selected');
+      input.checked = false;
+      selectedAttack = null;
+    }
+    else {
+      optionsAttack.forEach(l => {
+        l.classList.remove('selected');
+        l.querySelector('input').checked = false;
+      });
+
+      label.classList.add('selected');
+      input.checked = true;
+      selectedAttack = input.value;
+    }
+  });
+});
+
+
+//enemy list
+const enemyName = document.querySelector('.enemy-name-fight');
+const enemyAvatar = document.querySelector('.enemy-avatar-fight');
+const enemyHealthCounter = document.querySelector('.health-counter-enemy');
+const enemyHealthBar = document.querySelector('.health-bar-enemy');
+
+const enemies = [
+  {
+    name: 'Jorik',
+    avatar: 'assets/pic/enemies/enemy1.jpg',
+    health: 110,
+    damage: 7,
+    critChance: 0.25, 
+    critMultiplier: 1.8,
+    attackZones: 1,
+    defenseZones: 2,
+  },
+  {
+    name: 'Soev',
+    avatar: 'assets/pic/enemies/enemy2.jpg',
+    health: 120,
+    damage: 6,
+    critChance: 0.2,
+    critMultiplier: 1.8,
+    attackZones: 1,
+    defenseZones: 2,
+  },
+  {
+    name: 'Hobo',
+    avatar: 'assets/pic/enemies/enemy3.jpg',
+    health: 150,
+    damage: 8,
+    critChance: 0.2,
+    critMultiplier: 1.5,
+    attackZones: 2,
+    defenseZones: 1,
+  }
+];
+
+//pick enemy
+let currentEnemy = null;
+
+fightButton.addEventListener('click', () => {
+  const randomIndex = Math.floor(Math.random() * enemies.length);
+  currentEnemy = enemies[randomIndex];
+
+  enemyName.textContent = currentEnemy.name;
+  enemyAvatar.src = currentEnemy.avatar;
+  enemyHealthCounter.textContent = currentEnemy.health;
+
+  selectedAttack = null;
+  optionsAttack.forEach(label => {
+    label.classList.remove('selected');
+    label.querySelector('input').checked = false;
+  });
+
+  selectedDefence = [];
+  optionsDefence.forEach(label => {
+    label.classList.remove('selected');
+    label.querySelector('input').checked = false;
+  });
+
+  checkAttackButton();
+});
+
+
+
+const attackButton = document.querySelector('.attack-button');
+const leaveButton = document.querySelector('.leave-button');
+const playerHealthCounter = document.querySelector('.health-counter-player');
+const playerHealthBar = document.querySelector('.health-bar-player');
+const logText = document.querySelector('.log-text');
+
+let winsCounter = document.querySelector('.wins-counter');
+let losesCounter = document.querySelector('.loses-counter');
+
+//update healthbar
+function updateBars() {
+  playerHealthCounter.textContent = player.health;
+  playerHealthBar.style.width = (player.health / 100 * 100) + "%";
+
+  enemyHealthCounter.textContent = currentEnemy.health;
+  enemyHealthBar.style.width = (currentEnemy.health / 150 * 100) + "%"; 
+}
+
+
+function checkAttackButton() {
+  if (player.health <= 0 || currentEnemy.health <= 0) {
+    attackButton.classList.add('inactive');
+    return;
+  }
+
+  if (selectedAttack && selectedDefence.length === 2) {
+    attackButton.classList.remove('inactive');
+  } else {
+    attackButton.classList.add('inactive');
+  }
+}
+
+optionsAttack.forEach(l => l.addEventListener('click', checkAttackButton));
+optionsDefence.forEach(l => l.addEventListener('click', checkAttackButton));
+
+// generate random zones
+function getRandomZones(allZones, count) {
+  let zones = [];
+  while (zones.length < count) {
+    const rand = allZones[Math.floor(Math.random() * allZones.length)];
+    if (!zones.includes(rand)) zones.push(rand);
+  }
+  return zones;
+}
+
+// crit-hit
+function getDamage(baseDamage, critChance, critMultiplier) {
+  if (Math.random() < critChance) {
+    return { damage: Math.floor(baseDamage * critMultiplier), crit: true };
+  }
+  return { damage: baseDamage, crit: false };
+}
+
+// add text to log
+function addLog(attacker, defender, zone, damage, crit, blocked) {
+  let attackerColor = attacker === player.name ? "green" : "darkred";
+  let defenderColor = defender === player.name ? "green" : "darkred";
+
+  let dmgText = damage > 0 
+    ? `<span style="color:red">${damage}</span> damage`
+    : "no damage";
+
+  if (crit) dmgText = `CRITICAL <span style="color:red">${damage}</span> damage`;
+
+  let text = `<span style="color:${attackerColor}">${attacker}</span> attacked 
+              <span style="color:${defenderColor}">${defender}</span> to 
+              <span style="color:blue">${zone}</span> `;
+
+  if (blocked && !crit) {
+    text += `but ${defender} was able to protect his ${zone}.`;
+  } else if (blocked && crit) {
+    text += `but ${defender} blocked it, still ${dmgText}.`;
+  } else {
+    text += `and deal ${dmgText}.`;
+  }
+
+  logText.insertAdjacentHTML('beforeend', `<p>${text}</p>`);
+
+  requestAnimationFrame(() => {
+    logText.scrollTop = logText.scrollHeight;
+  });
+}
+
+attackButton.addEventListener('click', () => {
+  if (attackButton.classList.contains('inactive')) return;
+  if (!currentEnemy) return;
+
+  const playerAttack = selectedAttack;
+  const playerDefence = [...selectedDefence];
+
+  const zones = ["head","neck","body","legs"];
+  const enemyAttack = getRandomZones(zones, currentEnemy.attackZones);
+  const enemyDefence = getRandomZones(zones, currentEnemy.defenseZones);
+
+  let dmgObj = getDamage(player.damage, player.critChance, player.critMultiplier);
+  let blocked = enemyDefence.includes(playerAttack);
+
+  if (blocked && !dmgObj.crit) dmgObj.damage = 0;
+  if (blocked && dmgObj.crit) dmgObj.damage = Math.floor(dmgObj.damage / 2);
+
+  currentEnemy.health -= dmgObj.damage;
+  if (currentEnemy.health < 0) currentEnemy.health = 0;
+
+  addLog(player.name, currentEnemy.name, playerAttack, dmgObj.damage, dmgObj.crit, blocked);
+
+  let totalDamage = 0;
+  enemyAttack.forEach(zone => {
+    let dmgObjE = getDamage(currentEnemy.damage, currentEnemy.critChance, currentEnemy.critMultiplier);
+    let blockedE = playerDefence.includes(zone);
+
+    if (blockedE && !dmgObjE.crit) dmgObjE.damage = 0;
+    if (blockedE && dmgObjE.crit) dmgObjE.damage = Math.floor(dmgObjE.damage / 2);
+
+    player.health -= dmgObjE.damage;
+    if (player.health < 0) player.health = 0;
+
+    addLog(currentEnemy.name, player.name, zone, dmgObjE.damage, dmgObjE.crit, blockedE);
+
+    totalDamage += dmgObjE.damage;
+  });
+
+  updateBars();
+
+  // checkin if fight ends
+  if (player.health <= 0 || currentEnemy.health <= 0) {
+    attackButton.classList.add('inactive');
+
+    if (player.health <= 0 && currentEnemy.health > 0) {
+      logText.innerHTML += `<p style="color:red">YOU LOST!</p>`;
+      losesCounter.textContent = parseInt(losesCounter.textContent) + 1;
+    } else if (currentEnemy.health <= 0 && player.health > 0) {
+      logText.innerHTML += `<p style="color:green">YOU WIN!</p>`;
+      winsCounter.textContent = parseInt(winsCounter.textContent) + 1;
+    } else {
+      logText.innerHTML += `<p style="color:gray">DRAW!</p>`;
+    }
+  }
+});
+
+// Leave fight
+leaveButton.addEventListener('click', () => {
+  fightScreen.classList.remove('active');
+  mainScreen.classList.add('active');
+
+  if (player.health > 0 && currentEnemy.health <= 0) {
+  } else if (player.health <= 0 || currentEnemy.health > 0) {
+    losesCounter.textContent = parseInt(losesCounter.textContent) + 1;
+  }
+
+  player.health = 100;
+  if (currentEnemy) currentEnemy.health = 120;
+  updateBars();
+  logText.innerHTML = "";
 });
