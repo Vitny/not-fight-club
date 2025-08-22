@@ -41,7 +41,7 @@ createNameButton.addEventListener('click', () => {
 
   welcomePlayer.textContent = `Glory to the ${playerName}!`;
   playerNameDisplay.textContent = playerName;
-  playerNameDisplayFight = playerName;
+  playerNameDisplayFight.textContent = playerName;
 });
 
 avatarOptions.forEach(option => {
@@ -147,4 +147,44 @@ optionsAttack.forEach(label => {
 
     console.log("Выбран:", selectedAttack);
   });
+});
+
+
+//enemy list
+const enemyNameEl = document.querySelector('.enemy-name-fight');
+const enemyAvatarEl = document.querySelector('.enemy-avatar-fight');
+const enemyHealthCounterEl = document.querySelector('.health-counter-enemy');
+const enemyHealthBarEl = document.querySelector('.health-bar-enemy');
+
+const enemies = [
+  {
+    name: 'Jorik',
+    avatar: "assets/pic/enemies/enemy1.jpg",
+    health: 130,
+    crit: 1.5
+  },
+  {
+    name: 'Soev',
+    avatar: "assets/pic/enemies/enemy2.jpg",
+    health: 90,
+    crit: 1.2
+  },
+  {
+    name: 'Hobo',
+    avatar: "assets/pic/enemies/enemy3.jpg",
+    health: 150,
+    crit: 1.8
+  }
+];
+
+//pick enemy
+let currentEnemy = null;
+
+fightButton.addEventListener('click', () => {
+  const randomIndex = Math.floor(Math.random() * enemies.length);
+  currentEnemy = enemies[randomIndex];
+
+  enemyNameEl.textContent = currentEnemy.name;
+  enemyAvatarEl.src = currentEnemy.avatar;
+  enemyHealthCounterEl.textContent = currentEnemy.health;
 });

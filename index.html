@@ -67,7 +67,7 @@
   </div>
 
   <!--Fight screen-->
-  <div class="fight-screen screen active">
+  <div class="fight-screen screen">
     <div class="fight-container">
       <div class="character-info">
         <p class="character-name-fight">Hero name</p>
@@ -75,45 +75,60 @@
         <span class="health-counter-player">100</span>
         <div class="health-bar-player"></div>
       </div>
-      <div class="buttons-fight">
-        <div class="defence">
-          <span class="defence-text">Defence zones</span>
-          <div class="defence-zones">
-            <label class="option-defence">
-              <input type="checkbox" value="head"> Head
-            </label>
-            <label class="option-defence">
-              <input type="checkbox" value="neck"> Neck
-            </label>
-            <label class="option-defence">
-              <input type="checkbox" value="body"> Body
-            </label>
-            <label class="option-defence">
-              <input type="checkbox" value="legs"> Legs
-            </label>
+      <div class="buttons-fight-container">
+        <p class="info-fight-rules">You must choose 
+          <span class="defence-zone-info">
+            <span class="number-info">2</span> 
+            Defence zones
+          </span> 
+          and 
+          <span class="attack-zone-info">
+            <span class="number-info">1</span> 
+            Attack zone
+          </span></p>
+        <div class="buttons-fight">
+          <div class="defence">
+            <span class="defence-text">Defence zones</span>
+            <div class="defence-zones">
+              <label class="option-defence">
+                <input type="checkbox" value="head"> Head
+              </label>
+              <label class="option-defence">
+                <input type="checkbox" value="neck"> Neck
+              </label>
+              <label class="option-defence">
+                <input type="checkbox" value="body"> Body
+              </label>
+              <label class="option-defence">
+                <input type="checkbox" value="legs"> Legs
+              </label>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="attack">
+            <span class="attack-text">Attack zones</span>
+            <div class="attack-zones">
+              <label class="option-attack">
+                <input type="checkbox" value="head"> Head
+              </label>
+              <label class="option-attack">
+                <input type="checkbox" value="neck"> Neck
+              </label>
+              <label class="option-attack">
+                <input type="checkbox" value="body"> Body
+              </label>
+              <label class="option-attack">
+                <input type="checkbox" value="legs"> Legs
+              </label>
+            </div>
           </div>
         </div>
-        <div class="divider"></div>
-        <div class="attack">
-          <span class="attack-text">Attack zones</span>
-          <div class="attack-zones">
-            <label class="option-attack">
-              <input type="checkbox" value="head"> Head
-            </label>
-            <label class="option-attack">
-              <input type="checkbox" value="neck"> Neck
-            </label>
-            <label class="option-attack">
-              <input type="checkbox" value="body"> Body
-            </label>
-            <label class="option-attack">
-              <input type="checkbox" value="legs"> Legs
-            </label>
-          </div>
+        <div>
+          <button class="attack-button inactive">Attack!</button>
         </div>
       </div>
       <div class="enemy-info">
-        <p class="enemy-name-fight">Hero name</p>
+        <p class="enemy-name-fight">Enemy name</p>
         <img class="enemy-avatar-fight" src="" alt="player avatar">
         <span class="health-counter-enemy">100</span>
         <div class="health-bar-enemy"></div>
