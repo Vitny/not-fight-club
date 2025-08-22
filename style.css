@@ -30,7 +30,7 @@ h1 {
   flex-direction: column;
   align-items: center;
   width: 1000px;
-  height: 600px;
+  height: 800px;
   border-style: double;
   background-color: rgb(238, 238, 238);
 }
@@ -80,7 +80,8 @@ h1 {
 .confirm-appearance,
 .character-name-button,
 .character-appearance-button,
-.change-name-button {
+.change-name-button,
+.leave-button {
   font-family: "Jersey 15";
   font-size: 20;
   font-style: italic;
@@ -237,6 +238,27 @@ h1 {
   background-color: rgb(55, 55, 55);
 }
 
+.divider-log {
+  height: 1px;
+  width: 150px;
+  background-color: rgb(55, 55, 55);
+}
+
+.log-container {
+  margin: 30px;
+  align-self: baseline;
+}
+
+.log-text {
+  width: 950px;
+  height: 200px;
+  overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
 .buttons-fight-container {
   display: flex;
   flex-direction: column;
@@ -244,10 +266,10 @@ h1 {
 }
 
 .attack-button {
-  margin-top: 20px;
+  margin: 20px 0 10px;
 }
 
-.attack-button.inactive {
+.inactive {
   background-color: gray;
 }
 
@@ -269,4 +291,22 @@ h1 {
 
 .attack-zone-info {
   color: rgb(215, 70, 51);;
+}
+
+.buttons-battle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.leave-info1 {
+  margin-top: 5px;
+}
+
+.leave-info2 {
+  margin-top: -5px;
+}
+
+.loose-text {
+  font-size: 24px;
 }

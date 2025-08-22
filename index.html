@@ -32,7 +32,7 @@
       <img class="avatar" src="assets/pic/avatars/warrior5.jpg" alt="pixel art picture of warrior">
       <img class="avatar" src="assets/pic/avatars/warrior6.jpg" alt="pixel art picture of warrior">
     </div>
-    <button class="confirm-appearance">Confirm your look</button>
+    <button class="confirm-appearance inactive">Confirm your look</button>
   </div>
 
   <!--Main/Character screen-->
@@ -123,8 +123,11 @@
             </div>
           </div>
         </div>
-        <div>
+        <div class="buttons-battle">
           <button class="attack-button inactive">Attack!</button>
+          <button class="leave-button">Leave fight</button>
+          <span class="leave-info1">if you leave fight before end,</span>
+          <span class="leave-info2">it will count as <span class="loose-text">LOST</span></span>
         </div>
       </div>
       <div class="enemy-info">
@@ -133,6 +136,11 @@
         <span class="health-counter-enemy">100</span>
         <div class="health-bar-enemy"></div>
       </div>
+    </div>
+    <div class="log-container">
+      <p>Fight log</p>
+      <div class="divider-log"></div>
+      <div class="log-text"></div>
     </div>
   </div>
 
