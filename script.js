@@ -54,6 +54,8 @@ createNameButton.addEventListener('click', () => {
   playerNameDisplay.textContent = playerName;
   playerNameDisplayFight.textContent = playerName;
   player.name = playerName;
+
+  saveGameState();
 });
 
 avatarOptions.forEach(option => {
@@ -66,6 +68,8 @@ avatarOptions.forEach(option => {
     playerAvatarDisplayFight.src = playerAvatar;
     
     confirmAppearanceButton.classList.remove('inactive');
+
+    saveGameState();
   });
 });
 
@@ -78,6 +82,7 @@ confirmAppearanceButton.addEventListener('click', () => {
 
   welcomePlayer.textContent = `Change the appearance of your character`;
   appearanceText.textContent = ' ';
+  saveGameState();
 });
 
 changeAppearanceButton.addEventListener('click', () => {
@@ -197,7 +202,7 @@ const enemies = [
   {
     name: 'Hobo',
     avatar: 'assets/pic/enemies/enemy3.jpg',
-    health: 150,
+    health: 70,
     damage: 8,
     critChance: 0.2,
     critMultiplier: 1.5,
@@ -230,6 +235,7 @@ fightButton.addEventListener('click', () => {
   });
 
   checkAttackButton();
+  saveGameState();
 });
 
 
@@ -246,7 +252,7 @@ let losesCounter = document.querySelector('.loses-counter');
 //update healthbar
 function updateBars() {
   playerHealthCounter.textContent = player.health;
-  playerHealthBar.style.width = (player.health / 100 * 100) + "%";
+  playerHealthBar.style.width = (player.health / 120 * 100) + "%";
 
   enemyHealthCounter.textContent = currentEnemy.health;
   enemyHealthBar.style.width = (currentEnemy.health / 150 * 100) + "%"; 
@@ -256,6 +262,7 @@ function updateBars() {
 function checkAttackButton() {
   if (player.health <= 0 || currentEnemy.health <= 0) {
     attackButton.classList.add('inactive');
+    saveGameState();
     return;
   }
 
@@ -305,7 +312,7 @@ function addLog(attacker, defender, zone, damage, crit, blocked) {
   if (blocked && !crit) {
     text += `but ${defender} was able to protect his ${zone}.`;
   } else if (blocked && crit) {
-    text += `but ${defender} blocked it, still ${dmgText}.`;
+    text += `but ${defender} blocked it, still hit ${dmgText}.`;
   } else {
     text += `and deal ${dmgText}.`;
   }
@@ -356,6 +363,7 @@ attackButton.addEventListener('click', () => {
   });
 
   updateBars();
+  saveGameState();
 
   // checkin if fight ends
   if (player.health <= 0 || currentEnemy.health <= 0) {
@@ -370,6 +378,7 @@ attackButton.addEventListener('click', () => {
     } else {
       logText.innerHTML += `<p style="color:gray">DRAW!</p>`;
     }
+    saveGameState();
   }
 });
 
@@ -383,8 +392,149 @@ leaveButton.addEventListener('click', () => {
     losesCounter.textContent = parseInt(losesCounter.textContent) + 1;
   }
 
-  player.health = 100;
+  player.health = 120;
   if (currentEnemy) currentEnemy.health = 120;
   updateBars();
   logText.innerHTML = "";
+
+  saveGameState();
 });
+
+
+//save player data
+function saveGameState() {
+  const state = {
+    playerName,
+    playerAvatar,
+    playerHealth: player.health,
+    playerWins: parseInt(winsCounter.textContent),
+    playerLoses: parseInt(losesCounter.textContent),
+    selectedAttack,
+    selectedDefence,
+    currentEnemy: currentEnemy ? {
+      name: currentEnemy.name,
+      health: currentEnemy.health,
+      avatar: currentEnemy.avatar,
+      damage: currentEnemy.damage,
+      critChance: currentEnemy.critChance,
+      critMultiplier: currentEnemy.critMultiplier,
+      attackZones: currentEnemy.attackZones,
+      defenseZones: currentEnemy.defenseZones,
+      attackZonesSelected: currentEnemy.attackZonesSelected || []
+    } : null,
+    fightLog: Array.from(logText.children).map(p => p.innerHTML),
+    isFighting: fightScreen.classList.contains('active')
+  };
+  localStorage.setItem('gameState', JSON.stringify(state));
+}
+
+function loadGameState() {
+  const state = JSON.parse(localStorage.getItem('gameState'));
+  if (!state) return;
+
+  if (state.playerName) {
+    playerName = state.playerName;
+    player.name = state.playerName;
+    playerNameDisplay.textContent = player.name;
+    playerNameDisplayFight.textContent = player.name;
+    changeInput.value = playerName;
+  }
+
+  if (state.playerAvatar) playerAvatar = state.playerAvatar;
+  playerNameDisplay.textContent = playerName;
+  playerNameDisplayFight.textContent = playerName;
+  playerAvatarDisplay.src = playerAvatar || '';
+  playerAvatarDisplayFight.src = playerAvatar || '';
+
+  winsCounter.textContent = state.playerWins || 0;
+  losesCounter.textContent = state.playerLoses || 0;
+
+  player.health = state.playerHealth || 120;
+
+  selectedAttack = state.selectedAttack || null;
+  selectedDefence = state.selectedDefence || [];
+
+  if (state.currentEnemy) {
+    currentEnemy = state.currentEnemy;
+    enemyName.textContent = currentEnemy.name;
+    enemyAvatar.src = currentEnemy.avatar;
+    enemyHealthCounter.textContent = currentEnemy.health;
+
+    currentEnemy.attackZonesSelected = currentEnemy.attackZonesSelected || [];
+
+    selectedAttack = state.selectedAttack || null;
+    selectedDefence = state.selectedDefence || [];
+
+    optionsAttack.forEach(label => {
+      label.addEventListener('click', (e) => {
+        e.preventDefault();
+        saveGameState();
+      });
+
+      const input = label.querySelector('input');
+      if (input.value === selectedAttack) {
+        label.classList.add('selected');
+        input.checked = true;
+      } else {
+        label.classList.remove('selected');
+        input.checked = false;
+      }
+    });
+
+    optionsDefence.forEach(label => {
+      label.addEventListener('click', (e) => {
+        e.preventDefault();
+        saveGameState();
+      });
+
+      const input = label.querySelector('input');
+      if (selectedDefence.includes(input.value)) {
+        label.classList.add('selected');
+        input.checked = true;
+      } else {
+        label.classList.remove('selected');
+        input.checked = false;
+      }
+    });
+
+    checkAttackButton();
+  }
+
+  if (state.fightLog && state.fightLog.length) {
+    logText.innerHTML = '';
+    state.fightLog.forEach(msg => {
+      logText.insertAdjacentHTML('beforeend', `<p>${msg}</p>`);
+    });
+    logText.scrollTop = logText.scrollHeight;
+  }
+
+  if (!playerName) {
+    welcomePage.classList.add('active');
+  } else if (playerName && !playerAvatar) {
+    appearancePage.classList.add('active');
+    welcomePlayer.textContent = `Glory to the ${playerName}!`;
+  } else if (state.isFighting && state.currentEnemy) {
+    fightScreen.classList.add('active');
+    mainScreen.classList.remove('active');
+
+    currentEnemy = state.currentEnemy;
+    player.attackZones = state.playerAttackZones || [];
+    player.defenseZones = state.playerDefenseZones || [];
+
+    enemyName.textContent = currentEnemy.name;
+    enemyAvatar.src = currentEnemy.avatar;
+    enemyHealthCounter.textContent = currentEnemy.health;
+
+    if (state.fightLog && state.fightLog.length) {
+      logText.innerHTML = '';
+      state.fightLog.forEach(msg => logText.insertAdjacentHTML('beforeend', `<p>${msg}</p>`));
+      logText.scrollTop = logText.scrollHeight;
+    }
+
+    updateBars();
+  } else {
+    mainScreen.classList.add('active');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadGameState);
